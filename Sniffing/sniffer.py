@@ -1,10 +1,15 @@
+'''
+A web sniffer that reads in a single packet, and exit.
+'''
+# Import needed packages
 import socket
 import os
 
-HOST = '192.168.1.206'
+# Your computer
+HOST = '127.0.0.1'
 
 def main():
-    if os.name == 'nt':
+    if os.name == 'nt': # Identify whether the host is Windows or Linux
         socket_protocol = socket.IPPROTO_IP
     else:
         socket_protocol = socket.IPPROTO_ICMP
@@ -16,11 +21,11 @@ def main():
     if os.name == 'nt':
         sniffer.ioctl(socket.SIO_RCVALL, socket.RCVALL_ON)
         
-    print(sniffer.recvfrom(65565))
+    print(sniffer.recvfrom(65565)) # Receive data
 
     if os.name == 'nt':
         sniffer.ioctl(socket.SIO_RCVALL, socket.RCVALL_OFF)
     
-
+# Run the program
 if __name__ == '__main__':
     main()

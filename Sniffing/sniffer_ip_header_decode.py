@@ -1,12 +1,19 @@
+'''
+The same sniffer, but with IP header decode.
+
+In its current form, our sniffer receives all of the IP headers, along with any higher protocols such as TCP, UDP, or ICMP. The information is packed into binary form and, is quite difficult to understand. This program allow you to decode the information so that you can pull useful information from it, such as the protocol type (TCP, UDP, or ICMP) and the source and destination IP address.
+'''
+# Import needed packages
 import ipaddress
 import os
 import socket
-import struct
+import struct # Provides format characters that you can use to specify the structure of the binary data
 import sys
 
+# The IP decoder
 class IP:
     def __init__(self, buff=None):
-        header = struct.unpack('<BBHHHBBH4s4s', buff)
+        header = struct.unpack('<BBHHHBBH4s4s', buff) # The first format character (<) always specifies the endianness of the data, or the order of bytes within a binary number
         self.ver = header[0] >> 4
         self.ihl = header[0] & 0xF
     
@@ -32,6 +39,7 @@ class IP:
             print('%s No protocol for %s' % (e, self.protocol_num))
             self.protocol = str(self.protocol_num)
 
+# The sniffer, same as sniffer.py
 def sniff(host):
     if os.name == 'nt':
         socket_protocol = socket.IPPROTO_IP
