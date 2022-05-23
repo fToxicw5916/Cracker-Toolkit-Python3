@@ -22,3 +22,10 @@ On Linux, open another terminal and run:
 ping google.com
 ```
 You should also be able to see some output on the first terminal.
+## scanner.py
+Use `ifconfig` on Linux or `ipconfig` on Windows to check your IP address. I'm on 192.168.0.187, so we set the scanner to hit 192.168.0.0/24.
+Then run:
+```bash
+python scanner.py
+```
+You should see an output that tells you what hosts are responding.

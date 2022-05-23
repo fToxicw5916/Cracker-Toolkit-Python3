@@ -1,9 +1,16 @@
+'''
+The same sniffer, but with ICMP decoder. Remember to change the host at the bottom of the script before running!
+
+Let's add more code to our previous sniffer to include the ability to decode ICMP packets.
+'''
+# Import needed packages
 import ipaddress
 import os
 import socket
 import struct
 import sys
 
+# IP layer decode
 class IP:
     def __init__(self, buff=None):
         header = struct.unpack('<BBHHHBBH4s4s', buff)
@@ -20,11 +27,11 @@ class IP:
         self.src = header[8]
         self.dst = header[9]
 
-        # human readable IP addresses
+        # Human readable IP addresses
         self.src_address = ipaddress.ip_address(self.src)
         self.dst_address = ipaddress.ip_address(self.dst)
 
-        # map protocol constants to their names
+        # Map protocol constants to their names
         self.protocol_map = {1: "ICMP", 6: "TCP", 17: "UDP"}
         try:
             self.protocol = self.protocol_map[self.protocol_num]
@@ -32,6 +39,7 @@ class IP:
             print('%s No protocol for %s' % (e, self.protocol_num))
             self.protocol = str(self.protocol_num)
 
+# ICMP layer
 class ICMP:
     def __init__(self, buff):
         header = struct.unpack('<BBHHH', buff)
@@ -41,7 +49,7 @@ class ICMP:
         self.id = header[3]
         self.seq = header[4]
 
-
+# Sniffer
 def sniff(host):
     if os.name == 'nt':
         socket_protocol = socket.IPPROTO_IP
@@ -74,9 +82,10 @@ def sniff(host):
             sniffer.ioctl(socket.SIO_RCVALL, socket.RCVALL_OFF)
         sys.exit()
 
+# Run
 if __name__ == '__main__':
     if len(sys.argv) == 2:
         host = sys.argv[1]
     else:
-        host = '192.168.1.206'
+        host = '127.0.0.1' # Don't forget to change this!
     sniff(host)

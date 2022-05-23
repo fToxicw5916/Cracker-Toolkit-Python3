@@ -1,3 +1,9 @@
+'''
+The full scanner with IP layer, ICMP layer and IP Adress module. Remember to change SUBNET, MESSAGE and host before using!
+
+Now let's add the use of the ipaddress module so that we can cover an entire subnet with our host discovery scan.
+'''
+# Import needed packages
 import ipaddress
 import os
 import socket
@@ -6,9 +12,10 @@ import sys
 import threading
 import time
 
-SUBNET = '192.168.1.0/24'
-MESSAGE = 'PYTHONRULES!'
+SUBNET = '192.168.1.0/24' # Target subnet here!
+MESSAGE = 'PYTHONRULES!' # Message here!
 
+# Decode IP layer
 class IP:
     def __init__(self, buff=None):
         header = struct.unpack('<BBHHHBBH4s4s', buff)
@@ -37,6 +44,7 @@ class IP:
             print('%s No protocol for %s' % (e, self.protocol_num))
             self.protocol = str(self.protocol_num)
 
+# Decode ICMP layer
 class ICMP:
     def __init__(self, buff):
         header = struct.unpack('<BBHHH', buff)
@@ -46,7 +54,7 @@ class ICMP:
         self.id = header[3]
         self.seq = header[4]
 
-
+# Send message
 def udp_sender():
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sender:
         for ip in ipaddress.ip_network(SUBNET).hosts():
@@ -54,7 +62,7 @@ def udp_sender():
             print('+', end='')
             sender.sendto(bytes(MESSAGE, 'utf8'), (str(ip), 65212))
             
-
+# Scanner
 class Scanner:
     def __init__(self, host):
         self.host = host
@@ -99,11 +107,12 @@ class Scanner:
             print('')
             sys.exit()
 
+# Run program
 if __name__ == '__main__':
     if len(sys.argv) == 2:
         host = sys.argv[1]
     else:
-        host = '192.168.1.203'
+        host = '127.0.0.1' # Host here!
     s = Scanner(host)
     time.sleep(10)
     t = threading.Thread(target=udp_sender)
