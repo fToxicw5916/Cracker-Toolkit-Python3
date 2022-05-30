@@ -12,7 +12,7 @@ import sys
 import threading
 import time
 
-SUBNET = '192.168.1.0/24' # Target subnet here!
+SUBNET = '192.168.10.0/24' # Target subnet here!
 MESSAGE = 'PYTHONRULES!' # Message here!
 
 # Decode IP layer
@@ -112,7 +112,7 @@ if __name__ == '__main__':
     if len(sys.argv) == 2:
         host = sys.argv[1]
     else:
-        host = '127.0.0.1' # Host here!
+        host = '192.168.10.66' # Host here!
     s = Scanner(host)
     time.sleep(10)
     t = threading.Thread(target=udp_sender)

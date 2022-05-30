@@ -1,13 +1,21 @@
+'''
+Identify faces in the images.
+'''
+# Import needed packages
 from pprint import pprint
 import cv2
 import os
-ROOT = '/home/parallels/Documents/ToolBox/ARP/images'
-FACES = '/home/parallels/Documents/ToolBox/ARP/faces'
-TRAIN = '/home/parallels/Documents/ToolBox/ARP'
 
+# Image dir
+ROOT = ''
+# Output dir
+FACES = ''
+# Train file dir
+TRAIN = ''
 
+# Detector
 def detect(srcdir=ROOT, tgtdir=FACES, train_dir=TRAIN):
-    for fname in os.listdir(srcdir):  
+    for fname in os.listdir(srcdir):
         if not fname.upper().endswith('.JPG'):
             continue
         fullname = os.path.join(srcdir, fname)
@@ -17,6 +25,7 @@ def detect(srcdir=ROOT, tgtdir=FACES, train_dir=TRAIN):
             continue
 
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        # Read the training file
         training = os.path.join(train_dir, 'haarcascade_frontalface_alt.xml')
         cascade = cv2.CascadeClassifier(training)
         rects = cascade.detectMultiScale(gray, 1.3, 5)
@@ -32,5 +41,6 @@ def detect(srcdir=ROOT, tgtdir=FACES, train_dir=TRAIN):
             cv2.rectangle(img, (x1, y1), (x2, y2), (127, 255, 0), 2)
         cv2.imwrite(newname, img)
 
+# Run
 if __name__ == '__main__':
     detect()

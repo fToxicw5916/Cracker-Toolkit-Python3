@@ -21,3 +21,18 @@ Then, run the Python script as root:
 ```bash
 sudo python arper.py 192.168.1.193 192.168.1.154 en0
 ```
+## recapper.py
+Remember to change some of the variable in the program before running!
+```bash
+sudo apt-get install libopencv-dev python3-opencv python3-numpy python3-scipy
+```
+Then, run:
+```bash
+python3 recapper.py
+```
+## detector.py
+Remember to change some of the variables in the program before running!
+Run:
+```bash
+python3 detector.py
+```

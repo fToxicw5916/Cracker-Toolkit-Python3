@@ -1,3 +1,9 @@
+'''
+pcap processing - analyze a pcap file, locate any images that are present, and writes those images to disk.
+
+Wireshark and other tools like Network Miner are great for interactively exploring packet capture files, but at times you'll want to slice and dice pcap files using Python and Scapy. Some great use cases are generating fuzzing test cases based on captured network traffic or even something as simple as replaying traffic that you have previously captured.
+'''
+# Import needed packages
 from scapy.all import TCP, rdpcap
 import collections
 import os
@@ -5,12 +11,12 @@ import re
 import sys
 import zlib
 
-OUTDIR = '/home/parallels/Documents/ToolBox/ARP/images'
-PCAPS = '/home/parallels/Documents/ToolBox/ARP'
+OUTDIR = '' # Image output dir
+PCAPS = '' # pcap file dir
 
 Response = collections.namedtuple('Response', ['header', 'payload'])
 
-
+# Takes the raw HTTP traffic and splits out the headers.
 def get_header(payload):
     try:
         header_raw = payload[:payload.index(b'\r\n\r\n')+2]
@@ -24,7 +30,7 @@ def get_header(payload):
         return None
     return header
 
-
+# Takes the HTTP response and the name for the content type we want to extract.
 def extract_content(Response, content_name='image'):
     content, content_type = None, None
     if content_name in Response.header['Content-Type']:
@@ -39,13 +45,15 @@ def extract_content(Response, content_name='image'):
 
     return content, content_type
 
-
+# The recapper
 class Recapper:
+    # Initialize the pcap file
     def __init__(self, fname):
         pcap = rdpcap(fname)
         self.sessions = pcap.sessions()
         self.responses = list()
 
+    # Traverse the packets to find each separate Response and add each one to the list of responses present in the packet stream.
     def get_responses(self):
         for session in self.sessions:
             payload = b''
@@ -56,7 +64,6 @@ class Recapper:
                 except IndexError:
                     sys.stdout.write('x')
                     sys.stdout.flush()
-
             if payload:
                 header = get_header(payload)
                 if header is None:
@@ -72,9 +79,9 @@ class Recapper:
                 with open(fname, 'wb') as f:
                     f.write(content)
 
-
+# Run program
 if __name__ == '__main__':
-    pfile = 'arper.pcap'  # os.path.join(PCAPS, 'pcap.pcap')
+    pfile = 'arper.pcap'  # Name of the file
     recapper = Recapper(pfile)
     recapper.get_responses()
     recapper.write('image')
