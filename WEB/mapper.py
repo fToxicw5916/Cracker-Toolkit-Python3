@@ -1,3 +1,7 @@
+'''
+A simple script that gets the map of the directories and filenames that come in a standard WordPress distribution.
+'''
+# Import needed packages
 import contextlib
 import os
 import queue
@@ -6,9 +10,9 @@ import sys
 import threading
 import time
 
-FILTERS = [".jpg", ".gif", ".png", ".css"]
-TARGET = "10.171.255.254"
-THREADS = 10
+FILTERS = [".jpg", ".gif", ".png", ".css"] # The mapper won't gather these kind of files
+TARGET = "" # Your target here!
+THREADS = 10 # Thread number
 
 answers = queue.Queue()
 web_paths = queue.Queue()
@@ -41,27 +45,28 @@ def test_remote():
     while not web_paths.empty():
         path = web_paths.get()
         url = f'{TARGET}{path}'
-        time.sleep(2)
+        time.sleep(2) # Cooldown - The website may ban your IP if you requests too quickly
         r = requests.get(url)
-        if r.status_code == 200:
+        if r.status_code == 200: # Code 200 - Success
             answers.put(url)
             sys.stdout.write('+')
         else:
             sys.stdout.write('x')
         sys.stdout.flush()
-            
+
+# Main function
 def run():
     mythreads = list()
     for i in range(THREADS):
         print(f'Spawning thread {i}')
-        t = threading.Thread(target=test_remote)
+        t = threading.Thread(target=test_remote) # Multiple thread
         mythreads.append(t)
-        t.start()
+        t.start() # Start the thread
 
     for thread in mythreads:
         thread.join()
-        
 
+# Run
 if __name__ == '__main__':
     with chdir("/"):
         gather_paths()
@@ -70,4 +75,4 @@ if __name__ == '__main__':
     with open('myanswers.txt', 'w') as f:
         while not answers.empty():
             f.write(f'{answers.get()}\n')
-    print('done')
+    print('Done.')
