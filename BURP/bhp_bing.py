@@ -1,6 +1,10 @@
+'''
+'''
+# Import needed packages
 from burp import IBurpExtender
 from burp import IContextMenuFactory
 
+# Java packages
 from java.net import URL
 from java.util import ArrayList
 from javax.swing import JMenuItem
@@ -10,10 +14,10 @@ import json
 import socket
 import urllib
 
-API_KEY = '<your api key>'
+API_KEY = '<your api key here!>'
 API_HOST = 'api.cognitive.microsoft.com'
 
-
+# The extender class
 class BurpExtender(IBurpExtender, IContextMenuFactory):
     def registerExtenderCallbacks(self, callbacks):
         self._callbacks = callbacks
@@ -39,13 +43,13 @@ class BurpExtender(IBurpExtender, IContextMenuFactory):
             print('User selected host: %s' % host)
             self.bing_search(host)
         return
-    
+
     def bing_search(self, host):
         try:
             is_ip = bool(socket.inet_aton(host))
         except socket.error:
             is_ip = False
-        
+
         if is_ip:
             ip_address = host
             domain = False
@@ -59,12 +63,12 @@ class BurpExtender(IBurpExtender, IContextMenuFactory):
     def bing_query(self, bing_query_string):
         print('Performing Bing search: %s' % bing_query_string)
         http_request = 'GET https://%s/bing/v7.0/search?' % API_HOST
-        http_request += 'q=%s HTTP/1.1\r\n' % urllib.quote(bing_query_string) 
+        http_request += 'q=%s HTTP/1.1\r\n' % urllib.quote(bing_query_string)
         http_request += 'Host: %s' % API_HOST
         http_request += 'Connection:close\r\n'
         http_request += 'Ocp-Apim-Subscription-Key: %s\r\n' % API_KEY
         http_request += 'User-Agent: Black Hat Python\r\n\r\n'
-    
+
         json_body = self._callbacks.makeHttpRequest(API_HOST, 443, True,
                                                     http_request).tostring()
         json_body = json_body.split('\r\n\r\n', 1)[1]
@@ -91,7 +95,9 @@ class BurpExtender(IBurpExtender, IContextMenuFactory):
             else:
                 print('Empty response from Bing.: %s' % bing_query_string)
         return
-         
-# if __name__ == '__main__':
-#     p = BurpExtender()
-#     p.bing_query('wikipedia.com')
+
+'''
+if __name__ == '__main__':
+    p = BurpExtender()
+    p.bing_query('wikipedia.com')
+'''
