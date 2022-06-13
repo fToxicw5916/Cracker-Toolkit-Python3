@@ -1,4 +1,5 @@
 '''
+This script will allow you to search for subdomains on Bing.
 '''
 # Import needed packages
 from burp import IBurpExtender
@@ -27,12 +28,14 @@ class BurpExtender(IBurpExtender, IContextMenuFactory):
         callbacks.registerContextMenuFactory(self)
         return
 
+    # Create a new menu
     def createMenuItems(self, context_menu):
         self.context = context_menu
         menu_list = ArrayList()
         menu_list.add(JMenuItem('Send to Bing', actionPerformed=self.bing_menu))
         return menu_list
 
+    # The new menu
     def bing_menu(self, event):
         http_traffic = self.context.getSelectedMessages()
         print('%d requests highlighted' % len(http_traffic))
@@ -60,6 +63,7 @@ class BurpExtender(IBurpExtender, IContextMenuFactory):
         if domain:
             start_new_thread(self.bing_query, ('domain:%s' % host,))
 
+    # Search function
     def bing_query(self, bing_query_string):
         print('Performing Bing search: %s' % bing_query_string)
         http_request = 'GET https://%s/bing/v7.0/search?' % API_HOST
