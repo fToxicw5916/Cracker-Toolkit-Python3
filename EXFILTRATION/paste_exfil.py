@@ -1,3 +1,7 @@
+'''
+A script that uploads data to pastebin.com
+'''
+# Import needed packages
 from win32com import client
 
 import os
@@ -5,12 +9,15 @@ import random
 import requests
 import time
 
-
+# Your pastebin account
 username = 'tim'
 password = 'seKret'
 api_dev_key = 'cd3xxx001xxxx02'
 
 def plain_paste(title, contents):
+    '''
+    Just paste some data.
+    '''
     login_url = 'https://pastebin.com/api/api_login.php'
     login_data = {
         'api_dev_key': api_dev_key,
@@ -34,31 +41,43 @@ def plain_paste(title, contents):
     print(r.text)
 
 def wait_for_browser(browser):
+    '''
+    Detec whether the browser is ready or not
+    '''
     while browser.ReadyState != 4 and browser.ReadyState != 'complete':
         time.sleep(0.1)
 
 def random_sleep():
+    '''
+    Random sleep for a while so that the website don't ban you.
+    '''
     time.sleep(random.randint(5,10))
 
 def login(ie):
+    '''
+    Login pastebin
+    '''
     full_doc = ie.Document.all
     for elem in full_doc:
         if elem.id == 'loginform-username':
             elem.setAttribute('value', username)
         elif elem.id == 'loginform-password':
             elem.setAttribute('value', password)
-    
+
     random_sleep()
     if ie.Document.forms[0].id == 'w0':
         ie.document.forms[0].submit()
     wait_for_browser(ie)
 
 def submit(ie, title, contents):
+    '''
+    Submit data.
+    '''
     full_doc = ie.Document.all
     for elem in full_doc:
         if elem.id == 'postform-name':
             elem.setAttribute('value', title)
-            
+
         elif elem.id == 'postform-text':
             elem.setAttribute('value', contents)
 
@@ -81,5 +100,6 @@ def ie_paste(title, contents):
 
     ie.Quit()
 
+# Execute
 if __name__ == '__main__':
     ie_paste('title', 'contents')

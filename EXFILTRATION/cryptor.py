@@ -1,3 +1,7 @@
+'''
+A script that encrypt and decrypt data.
+'''
+# Import needed packages
 from Cryptodome.Cipher import AES, PKCS1_OAEP
 from Cryptodome.PublicKey import RSA
 from Cryptodome.Random import get_random_bytes
@@ -8,18 +12,24 @@ import zlib
 
 
 def generate():
+    '''
+    Generate a RSA key.
+    '''
     new_key = RSA.generate(2048)
     private_key = new_key.exportKey()
     public_key = new_key.publickey().exportKey()
 
-    with open('key.pri', 'wb') as f:
+    with open('key.pri', 'wb') as f:  # Private key
         f.write(private_key)
 
-    with open('key.pub', 'wb') as f:
+    with open('key.pub', 'wb') as f:  # Public key
         f.write(public_key)
 
 
 def get_rsa_cipher(keytype):
+    '''
+    Easily get the public or the private key,
+    '''
     with open(f'key.{keytype}') as f:
         key = f.read()
     rsakey = RSA.importKey(key)
@@ -27,6 +37,9 @@ def get_rsa_cipher(keytype):
 
 
 def encrypt(plaintext):
+    '''
+    Encrypt data.
+    '''
     compressed_text = zlib.compress(plaintext)
 
     session_key = get_random_bytes(16)
@@ -42,6 +55,9 @@ def encrypt(plaintext):
 
 
 def decrypt(encrypted):
+    '''
+    Decrypt data.
+    '''
     encrypted_bytes = BytesIO(base64.decodebytes(encrypted))
     cipher_rsa, keysize_in_bytes = get_rsa_cipher('pri')
 
@@ -57,7 +73,8 @@ def decrypt(encrypted):
     plaintext = zlib.decompress(decrypted)
     return plaintext
 
-
+# Execute
 if __name__ == '__main__':
-    plaintext = b'hey there you.'
-    print(decrypt(encrypt(plaintext)))
+    generate()
+    # plaintext = b'hey there you.'  # Data to be encrypted or decrypted
+    # print(decrypt(encrypt(plaintext)))
