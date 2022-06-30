@@ -5,12 +5,14 @@ Run:
 ```bash
 python keylogger.py
 ```
+
 ## screenshotter.py
 Run:
 ```bash
 python screenshotter.py
 ```
 Check for a screenshot.bmp file in the current directory.
+
 ## shell-exec.py
 First, generate the shellcode using msfvenom:
 ```bash
@@ -25,12 +27,12 @@ At last, on the current directory, run:
 python -m http.server 8100
 ```
 to start a mini-server in no time.
-
 Now, run:
 ```bash
 python shell_exec.py
 ```
 to run the shellcode you just generated!
+
 ## sandbox-detect.py
 ```bash
 python sandbox-detect.py
