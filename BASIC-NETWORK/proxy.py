@@ -1,19 +1,20 @@
 '''
-A proxy made form Python.
-
-There are several reasons to have a TCP proxy in your toolkit. You might use one for forwarding traffic to bounce from host to host, or when when accessing network-based software. When performing penetration tests in enterprise environments, you probably won't be able to run Wireshark; nor will you be able to load drivers to sniff the loopback on Windows, and network segmentation will prevent you from running your tools directly against your target host. We've built simple Python proxies, like this one, in various cases to help you understand unknown protocols, modify traffic being send to an application, and create test cases for fuzzers.
+A simple proxy.
 '''
 # Import needed packages
-import sys
-import socket
-import threading
+import sys  # System control
+import socket  # Used for TCP connections
+import threading  # Multithread
 
 # Contains ASCII printable characters if one exists, or a dot (.) if such representation doesn't exist. Useful for understanding unknown protocols
 HEX_FILTER = ''.join(
     [(len(repr(chr(i))) == 3) and chr(i) or '.' for i in range(256)])
 
-# Translate and print the message
+
 def hexdump(src, length=16, show=True):
+    '''
+    Translate the message to HEX and then send it.
+    '''
     if isinstance(src, bytes):
         src = src.decode()
     results = list()
@@ -29,8 +30,11 @@ def hexdump(src, length=16, show=True):
     else:
         return results
 
-# Receive data
+
 def receive_from(connection):
+    '''
+    Receive data.
+    '''
     buffer = b""
     connection.settimeout(10)
     try:
@@ -46,16 +50,25 @@ def receive_from(connection):
 
     return buffer
 
-# Perform packet modifications
+
 def request_handler(buffer):
+    '''
+    Perform packet modifications.
+    '''
     return buffer
 def response_handler(buffer):
+    '''
+    Perform packet modifications.
+    '''
     return buffer
 
-# Handle connections
+
 def proxy_handler(client_socket, remote_host, remote_port, receive_first):
+    '''
+    Handle connections.
+    '''
     remote_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    remote_socket.connect((remote_host, remote_port))
+    remote_socket.connect((remote_host, remote_port))  # Connect to remote host
 
     if receive_first:
         remote_buffer = receive_from(remote_socket)
@@ -86,17 +99,20 @@ def proxy_handler(client_socket, remote_host, remote_port, receive_first):
             client_socket.send(remote_buffer)
             print("[==>] Sent to local.")
 
-        if not len(local_buffer) or not len(remote_buffer):
+        if not len(local_buffer) or not len(remote_buffer):  # No more data, close connection
             client_socket.close()
             remote_socket.close()
             print("[*] No more data. Closing connections.")
             break
 
-# Server loop
+
 def server_loop(local_host, local_port, remote_host, remote_port, receive_first):
+    '''
+    Server loop.
+    '''
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
-        server.bind((local_host, local_port))
+        server.bind((local_host, local_port))  # Bind host and port to create server
     except Exception as e:
         print("[!!] Failed to listen on %s:%d" % (local_host, local_port))
         print("[!!] Check for other listening sockets or correct permissions.")
@@ -115,9 +131,12 @@ def server_loop(local_host, local_port, remote_host, remote_port, receive_first)
                   remote_port, receive_first))
         proxy_thread.start()
 
-# Main function
+
 def main():
-    if len(sys.argv[1:]) != 5:
+    '''
+    Main function.
+    '''
+    if len(sys.argv[1:]) != 5:  # Help message
         print("Usage: ./proxy.py [localhost] [localport]", end='')
         print("[remotehost] [remoteport] [receive_first]")
         print("Example: ./proxy.py 127.0.0.1 9000 10.12.132.1 9000 True")
@@ -139,6 +158,6 @@ def main():
     server_loop(local_host, local_port,
                 remote_host, remote_port, receive_first)
 
-# Run the program
+
 if __name__ == '__main__':
     main()
