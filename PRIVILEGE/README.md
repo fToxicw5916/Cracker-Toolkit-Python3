@@ -1,1 +1,3 @@
 # The Privilege module
+So you've popped a box inside a nice, juicy Windows network. Maybe you leveraged a remote heap overflow, or you phished your way in. It's time to start looking for ways to escalate privileges.
+Even if you're already operating as SYSTEM or Administrator, you probably want serveral ways of achieving those privileges, in case a patch cycle kills your access. It can also be important to have a catalog og privileges escalations in your back pocket, as some enterprise run software that may be difficult in your own environment, and you may not run into that software until you are in an enterprise of the same size of composition.

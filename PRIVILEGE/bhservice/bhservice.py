@@ -1,3 +1,6 @@
+'''
+A script that inplements the service into your computer so that you can run other scripts.
+'''
 import os
 import servicemanager
 import shutil
@@ -8,8 +11,8 @@ import win32event
 import win32service
 import win32serviceutil
 
-SRCDIR = 'C:\\Users\\tim\\work'
-TGTDIR = 'C:\\Windows\\TEMP'
+SRCDIR = ''  # Source code directory
+TGTDIR = ''  # Target directory
 
 class BHServerSvc(win32serviceutil.ServiceFramework):
     _svc_name_ = "BlackHatService"
@@ -38,7 +41,7 @@ class BHServerSvc(win32serviceutil.ServiceFramework):
             if ret_code == win32event.WAIT_OBJECT_0:
                 servicemanager.LogInfoMsg("Service is stopping")
                 break
-            
+
             src = os.path.join(SRCDIR, 'bhservice_task.vbs')
             shutil.copy(src, self.vbs)
             subprocess.call("cscript.exe %s" % self.vbs, shell=False)

@@ -1,3 +1,6 @@
+'''
+A script that monitor's your process and try's to get the tokens for them.
+'''
 import os
 import sys
 
@@ -38,7 +41,7 @@ def monitor():
             parent_pid = new_process.ParentProcessId
             pid = new_process.ProcessId
             proc_owner = new_process.GetOwner()
-            
+
             privileges = get_process_privileges(pid)
             process_log_message = (
                 f'{cmdline} , {create_date} , {executable},'

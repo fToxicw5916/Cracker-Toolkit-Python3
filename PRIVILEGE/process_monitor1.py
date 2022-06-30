@@ -1,3 +1,6 @@
+'''
+A script that monitors your computer's process.
+'''
 import os
 import sys
 
@@ -24,7 +27,7 @@ def monitor():
             parent_pid = new_process.ParentProcessId
             pid = new_process.ProcessId
             proc_owner = new_process.GetOwner()
-            
+
             privileges = 'N/A'
             process_log_message = (
                 f'{cmdline} , {create_date} , {executable},'
