@@ -13,6 +13,7 @@ from HTMLParser import HTMLParser
 
 import re
 
+
 class TagStripper(HTMLParser):
     def __init__(self):
         HTMLParser.__init__(self)
@@ -28,8 +29,11 @@ class TagStripper(HTMLParser):
         self.feed(html)
         return ' '.join(self.page_text)
 
-# The extender
+
 class BurpExtender(IBurpExtender, IContextMenuFactory):
+    '''
+    The extender class
+    '''
     def registerExtenderCallbacks(self, callbacks):
         self._callbacks = callbacks
         self._helpers = callbacks.getHelpers()
@@ -41,15 +45,21 @@ class BurpExtender(IBurpExtender, IContextMenuFactory):
         callbacks.registerContextMenuFactory(self)
         return
 
-    # Create a new menu
+
     def createMenuItems(self, context_menu):
+        '''
+        Create a new menu
+        '''
         self.context = context_menu
         menu_list = ArrayList()
         menu_list.add(JMenuItem('Create Wordlist', actionPerformed=self.wordlist_menu))
         return menu_list
 
-    # The menu that we created
+
     def wordlist_menu(self, event):
+        '''
+        The menu that we created
+        '''
         http_traffic = self.context.getSelectedMessages()
         for traffic in http_traffic:
             http_service = traffic.getHttpService()
@@ -62,8 +72,11 @@ class BurpExtender(IBurpExtender, IContextMenuFactory):
         self.display_wordlist()
         return
 
-    # Generate words
+
     def get_words(self, http_response):
+        '''
+        Generate words
+        '''
         headers, body = http_response.tostring().split('\r\n\r\n', 1)
         if headers.lower().find('content-type: text') == -1:
             return
@@ -75,8 +88,11 @@ class BurpExtender(IBurpExtender, IContextMenuFactory):
                 self.wordlist.add(word.lower())
         return
 
-    # Mangle function, takes a base word and turns it into a number of passwords guesses based on some common passwords
+
     def mangle(self, word):
+        '''
+        Mangle function, takes a base word and turns it into a number of passwords guesses based on some common passwords
+        '''
         year = datetime.now().year
         suffixes = ['', '1', '!', year]
         mangled = list()
@@ -85,8 +101,11 @@ class BurpExtender(IBurpExtender, IContextMenuFactory):
                 mangled.append('%s%s' % (password, suffix))
         return mangled
 
-    # Display the wordlist
+
     def display_wordlist(self):
+        '''
+        Display wordlist
+        '''
         print('#!comment: BHP Wordlist for site(%s)' % ', '.join(self.hosts))
         for word in sorted(self.wordlist):
             for password in self.mangle(word):
