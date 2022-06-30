@@ -1,7 +1,5 @@
 '''
 This fuzzer that we will built can manipulate the payload in any way you choose. This fuzzer that be expand into something more intelligent.
-
-The program is in Python 2 since Jython only support Python 2.
 '''
 # Import needed packages
 from burp import IBurpExtender
@@ -11,8 +9,11 @@ from java.util import List, ArrayList
 
 import random
 
-# The burp extender class
+
 class BurpExtender(IBurpExtender, IIntruderPayloadGeneratorFactory):
+    '''
+    Burp extender class, used to implement the script.
+    '''
     def registerExtenderCallbacks(self, callbacks):
         self._callbacks = callbacks
         self._helpers = callbacks.getHelpers()
@@ -26,8 +27,11 @@ class BurpExtender(IBurpExtender, IIntruderPayloadGeneratorFactory):
     def createNewInstance(self, attack):
         return BHPFuzzer(self, attack)
 
-# The fuzzer class
+
 class BHPFuzzer(IIntruderPayloadGenerator):
+    '''
+    Fuzzer class.
+    '''
     def __init__(self, extender, attack):
         self._extender = extender
         self.helpers = extender._helpers
@@ -37,11 +41,13 @@ class BHPFuzzer(IIntruderPayloadGenerator):
 
         return
 
+
     def hasMorePayloads(self):
         if self.num_iterations == self.max_payloads:
             return False
         else:
             return True
+
 
     def getNextPayload(self, current_payload):
         payload = ''.join(chr(x) for x in current_payload)
@@ -50,9 +56,11 @@ class BHPFuzzer(IIntruderPayloadGenerator):
 
         return payload
 
+
     def reset(self):
         self.num_iterations = 0
         return
+
 
     def mutate_payload(self, original_payload):
         picker = random.randint(1, 3)
