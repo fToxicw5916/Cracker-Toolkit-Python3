@@ -2,7 +2,7 @@
 A simple UDP client.
 '''
 # Import needed packages
-import socket
+import socket  # For TCP connections
 
 # Target host and port
 HOST = '<Your host here>'
