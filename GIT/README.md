@@ -1,4 +1,8 @@
 # The Git module
+**Install github3.py module before use!**
+```bash
+pip install github3.py
+```
 ## github-trojan.py
 ```bash
 python github_trojan.py
