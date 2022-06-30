@@ -1,7 +1,5 @@
 '''
-This is a simple TCP client made from Python socket package. Change the parameters to your own before running the program. They are already highlighted in the file.
-
-Countless times during penetration tests, we have needed to whip up a TCP client to test for services, send garbage data, fuzz, or perform any number of other tasks. If you are working within the confines of large enterprise environments, you won't have the luxury of using networking tools or compilers, and sometimes you'll even be missing the absolute basics, like the ability to copy/paste or connect to the internet. This is where being able to quickly create a TCP client comes in extreme handy.
+A simple TCP client.
 '''
 # Import needed packages
 import socket  # For TCP connections
