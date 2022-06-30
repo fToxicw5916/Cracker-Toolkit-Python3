@@ -1,5 +1,6 @@
 # The Burp module
 **Install Jython before using! You can download it [here](https://www.jython.org/download)**
+All the script are written by Python 2, since Jython only supports Python 2.
 ## bhp-fuzzer.py
 ### Load the file
 Click the Extender tab, then click the Add button. Add the Python file, then switch Standard Output to Show in UI, do the same for Standard Error.
