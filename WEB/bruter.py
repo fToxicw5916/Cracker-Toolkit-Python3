@@ -9,11 +9,11 @@ import requests
 import sys
 import threading
 
-AGENT = "Mozilla/5.0 (X11; Linux x86_64; rv:19.0) Gecko/20100101 Firefox/19.0" # User Agent
-EXTENSIONS = ['.php', '.bak', '.orig', '.inc'] # Filter - You can only see these
-TARGET = "" # Your target here!
-THREADS = 5 # Thread number
-WORDLIST = "" # Wordlist
+AGENT = "Mozilla/5.0 (X11; Linux x86_64; rv:19.0) Gecko/20100101 Firefox/19.0"  # User Agent
+EXTENSIONS = ['.php', '.bak', '.orig', '.inc']  # Filter - You can only see these
+TARGET = "<Your target here!>"  # Your target here!
+THREADS = 5  # Thread number
+WORDLIST = "<Path to your wordlist here>"  # Wordlist
 
 def get_words(resume=None):
     def extend_words(word):
@@ -25,7 +25,7 @@ def get_words(resume=None):
         for extension in EXTENSIONS:
             words.put(f'/{word}{extension}')
 
-    with open(WORDLIST) as f: # Use wordlist
+    with open(WORDLIST) as f:  # Use wordlist
         raw_words = f.read()
     found_resume = False
     words = queue.Queue()
@@ -41,6 +41,7 @@ def get_words(resume=None):
             extend_words(word)
     return words
 
+
 def dir_bruter(words):
     headers = {'User-Agent': AGENT}
     while not words.empty():
@@ -52,19 +53,19 @@ def dir_bruter(words):
             sys.stderr.flush()
             continue
 
-        if r.status_code == 200: # Success
+        if r.status_code == 200:  # Success
             print(f'\nSuccess ({r.status_code}: {url})')
-        elif r.status_code == 404: # Fail
+        elif r.status_code == 404:  # Fail
             sys.stderr.write('.')
             sys.stderr.flush()
         else:
             print(f'{r.status_code} => {url}')
 
-# Run
+
 if __name__ == '__main__':
     words = get_words()
     print('Press return to continue.')
     sys.stdin.readline()
     for _ in range(THREADS):
         t = threading.Thread(target=dir_bruter, args=(words,))
-        t.start() # Start multiple thread
+        t.start()  # Start multiple thread
