@@ -5,7 +5,7 @@ pip install scapy
 ```
 ## mail-sniffer.py
 ```bash
-sudo python mail_sniffer.py
+python mail_sniffer.py
 ```
 When you are trying to login with a mail client, you should see some outputs.
 
