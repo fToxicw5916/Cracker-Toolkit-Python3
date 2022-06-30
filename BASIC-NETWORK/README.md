@@ -71,11 +71,19 @@ ftp 127.0.0.1
 ```
 
 ## ssh-cmd.py
+**Install Paramiko before use!**
+```bash
+pip install paramiko
+```
 ```bash
 python3 ssh_cmd.py
 ```
 
 ## ssh-rcmd.py and ssh-server.py
+**Install Paramiko before use!**
+```bash
+pip install paramiko
+```
 ### Server side
 ```bash
 python3 ssh_server.py
