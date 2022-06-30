@@ -1,4 +1,5 @@
 # The Web module
+I suggest you to download Sec-List from Github for the wordlist - It is excellent!
 ## mapper.py
 **Fill in some of the variables before using!**
 Use:
