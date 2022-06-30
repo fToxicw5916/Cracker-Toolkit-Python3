@@ -1,1 +1,1 @@
-# The encode-decode module
+# The Encode-Decode module
