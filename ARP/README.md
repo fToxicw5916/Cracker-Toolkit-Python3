@@ -1,4 +1,8 @@
 # The ARP module
+**All of the scripts in this module used Scapy! Install before use!**
+```bash
+pip install scapy
+```
 ## mail-sniffer.py
 ```bash
 sudo python mail_sniffer.py
