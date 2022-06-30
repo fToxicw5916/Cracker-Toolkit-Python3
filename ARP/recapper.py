@@ -1,7 +1,5 @@
 '''
-pcap processing - analyze a pcap file, locate any images that are present, and writes those images to disk.
-
-Wireshark and other tools like Network Miner are great for interactively exploring packet capture files, but at times you'll want to slice and dice pcap files using Python and Scapy. Some great use cases are generating fuzzing test cases based on captured network traffic or even something as simple as replaying traffic that you have previously captured.
+pcap processing.
 '''
 # Import needed packages
 from scapy.all import TCP, rdpcap
@@ -11,13 +9,16 @@ import re
 import sys
 import zlib
 
-OUTDIR = '' # Image output dir
-PCAPS = '' # pcap file dir
+OUTDIR = '<Image output directory here>'  # Image output dir
+PCAPS = '<pcap file directory here>'  # pcap file dir
 
 Response = collections.namedtuple('Response', ['header', 'payload'])
 
-# Takes the raw HTTP traffic and splits out the headers.
+
 def get_header(payload):
+    '''
+    Takes the raw HTTP traffic and splits out the headers.
+    '''
     try:
         header_raw = payload[:payload.index(b'\r\n\r\n')+2]
     except ValueError:
@@ -30,8 +31,11 @@ def get_header(payload):
         return None
     return header
 
-# Takes the HTTP response and the name for the content type we want to extract.
+
 def extract_content(Response, content_name='image'):
+    '''
+    Takes the HTTP response and the name for the content type we want to extract.
+    '''
     content, content_type = None, None
     if content_name in Response.header['Content-Type']:
         content_type = Response.header['Content-Type'].split('/')[1]
@@ -45,16 +49,24 @@ def extract_content(Response, content_name='image'):
 
     return content, content_type
 
-# The recapper
+
 class Recapper:
-    # Initialize the pcap file
+    '''
+    Recapper class.
+    '''
     def __init__(self, fname):
+        '''
+        Initialize the pcap file.
+        '''
         pcap = rdpcap(fname)
         self.sessions = pcap.sessions()
         self.responses = list()
 
-    # Traverse the packets to find each separate Response and add each one to the list of responses present in the packet stream.
+
     def get_responses(self):
+        '''
+        Traverse the packets to find each separate Response and add each one to the list of responses present in the packet stream.
+        '''
         for session in self.sessions:
             payload = b''
             for packet in self.sessions[session]:
@@ -70,6 +82,7 @@ class Recapper:
                     continue
                 self.responses.append(Response(header=header, payload=payload))
 
+
     def write(self, content_name):
         for i, response in enumerate(self.responses):
             content, content_type = extract_content(response, content_name)
@@ -79,7 +92,7 @@ class Recapper:
                 with open(fname, 'wb') as f:
                     f.write(content)
 
-# Run program
+
 if __name__ == '__main__':
     pfile = 'arper.pcap'  # Name of the file
     recapper = Recapper(pfile)
