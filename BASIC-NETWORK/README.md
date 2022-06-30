@@ -1,4 +1,16 @@
 # The Basic-Network module
+## tcp-client.py
+**Change parameters in the file before using!**
+```bash
+python tcp_client.py
+```
+
+## udp-client.py
+**Change parameters in the file before using!**
+```bash
+python udp_client.py
+```
+
 ## netcat.py
 ### Get help:
 ```bash
@@ -52,13 +64,12 @@ On another terminal:
 ftp 127.0.0.1
 ```
 
-## ssh_cmd.py
-### Connect to Linux server
+## ssh-cmd.py
 ```bash
 python3 ssh_cmd.py
 ```
 
-## ssh_rcmd.py and ssh_server.py
+## ssh-rcmd.py and ssh-server.py
 ### Server side
 ```bash
 python3 ssh_server.py
