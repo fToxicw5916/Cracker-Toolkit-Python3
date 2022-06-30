@@ -15,11 +15,14 @@ import json
 import socket
 import urllib
 
-API_KEY = '<your api key here!>'
+API_KEY = '<Your api key here!>'  # Your API key
 API_HOST = 'api.cognitive.microsoft.com'
 
-# The extender class
+
 class BurpExtender(IBurpExtender, IContextMenuFactory):
+    '''
+    The extender class.
+    '''
     def registerExtenderCallbacks(self, callbacks):
         self._callbacks = callbacks
         self._helpers = callbacks.getHelpers()
@@ -28,15 +31,21 @@ class BurpExtender(IBurpExtender, IContextMenuFactory):
         callbacks.registerContextMenuFactory(self)
         return
 
-    # Create a new menu
+
     def createMenuItems(self, context_menu):
+        '''
+        Create a new menu
+        '''
         self.context = context_menu
         menu_list = ArrayList()
         menu_list.add(JMenuItem('Send to Bing', actionPerformed=self.bing_menu))
         return menu_list
 
-    # The new menu
+
     def bing_menu(self, event):
+        '''
+        The new menu
+        '''
         http_traffic = self.context.getSelectedMessages()
         print('%d requests highlighted' % len(http_traffic))
 
@@ -46,6 +55,7 @@ class BurpExtender(IBurpExtender, IContextMenuFactory):
             print('User selected host: %s' % host)
             self.bing_search(host)
         return
+
 
     def bing_search(self, host):
         try:
@@ -63,8 +73,11 @@ class BurpExtender(IBurpExtender, IContextMenuFactory):
         if domain:
             start_new_thread(self.bing_query, ('domain:%s' % host,))
 
-    # Search function
+
     def bing_query(self, bing_query_string):
+        '''
+        Search function
+        '''
         print('Performing Bing search: %s' % bing_query_string)
         http_request = 'GET https://%s/bing/v7.0/search?' % API_HOST
         http_request += 'q=%s HTTP/1.1\r\n' % urllib.quote(bing_query_string)
@@ -100,6 +113,7 @@ class BurpExtender(IBurpExtender, IContextMenuFactory):
                 print('Empty response from Bing.: %s' % bing_query_string)
         return
 
+# Testing function
 '''
 if __name__ == '__main__':
     p = BurpExtender()
