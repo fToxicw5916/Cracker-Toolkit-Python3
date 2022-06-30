@@ -1,7 +1,14 @@
 # The ARP module
-**All of the scripts in this module used Scapy! Install before use!**
+**All of the scripts in this module used Scapy and OpenCV! Install before use!**
 ```bash
 pip install scapy
+```
+```bash
+sudo apt-get install libopencv-dev python3-opencv python3-numpy python3-scipy
+```
+If you want to download the training file yourself, use:
+```bash
+wget http://eclecti.cc/files/2008/03/haarcascade_frontalface_alt.xml
 ```
 ## mail-sniffer.py
 ```bash
