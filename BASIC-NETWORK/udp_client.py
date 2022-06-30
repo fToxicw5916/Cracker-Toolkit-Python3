@@ -1,10 +1,10 @@
 '''
-A simple UDP client written in Python with the socket package. Change the parameters that are highlighted in the file to your own before running it.
+A simple UDP client.
 '''
 # Import needed packages
 import socket
 
-# Host and port
+# Target host and port
 HOST = '<Your host here>'
 PORT = <Your port here>
 
