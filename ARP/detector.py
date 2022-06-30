@@ -26,7 +26,7 @@ def detect(srcdir=ROOT, tgtdir=FACES, train_dir=TRAIN):
 
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         # Read the training file
-        training = os.path.join(train_dir, 'train.xml')
+        training = os.path.join(train_dir, 'haarcascade_frontalface_alt.xml')
         cascade = cv2.CascadeClassifier(training)
         rects = cascade.detectMultiScale(gray, 1.3, 5)
         try:
