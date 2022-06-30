@@ -10,6 +10,9 @@ HOST = '127.0.0.1'
 
 
 def main():
+    '''
+    Main function.
+    '''
     if os.name == 'nt':  # Identify whether the host is Windows or Linux
         socket_protocol = socket.IPPROTO_IP
     else:
