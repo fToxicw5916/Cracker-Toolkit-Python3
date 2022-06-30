@@ -86,6 +86,6 @@ class Bruter:
 
 
 if __name__ == '__main__':
-    b = Bruter('tim', TARGET)
+    b = Bruter('<Username here>', TARGET)  # Username here
     words = get_words()
     b.run_bruteforce(words)
