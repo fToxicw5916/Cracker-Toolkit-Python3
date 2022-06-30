@@ -11,6 +11,12 @@ python tcp_client.py
 python udp_client.py
 ```
 
+## tcp-server.py
+**Change parameters in the file before using!**
+```bash
+python tcp_server.py
+```
+
 ## netcat.py
 ### Get help:
 ```bash
