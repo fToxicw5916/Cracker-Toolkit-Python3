@@ -8,11 +8,13 @@ import sys
 import time
 import win32api  # Some Windows APIs
 
+
 class LASTINPUTINFO(Structure):
     _fields_ = [
         ('cbSize', c_uint),
         ('dwTime', c_ulong)
     ]
+
 
 def get_last_input():
     '''
@@ -30,11 +32,13 @@ def get_last_input():
 #     get_last_input()
 #     time.sleep(1)
 
+
 class Detector:
     def __init__(self):
         self.double_clicks = 0
         self.keystrokes = 0
         self.mouse_clicks = 0
+
 
     def get_key_press(self):
         '''
@@ -49,6 +53,7 @@ class Detector:
                 elif i > 32 and i < 127:
                     self.keystrokes += 1
         return None
+
 
     def detect(self):
         previous_timestamp = None
@@ -89,9 +94,8 @@ class Detector:
             elif keypress_time is not None:
                 previous_timestamp = keypress_time
 
-# Execute
+
 if __name__ == '__main__':
     d = Detector()
     d.detect()
     print('okay.')
-
