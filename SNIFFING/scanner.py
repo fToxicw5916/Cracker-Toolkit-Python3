@@ -1,7 +1,5 @@
 '''
-The full scanner with IP layer, ICMP layer and IP Adress module. Remember to change SUBNET, MESSAGE and host before using!
-
-Now let's add the use of the ipaddress module so that we can cover an entire subnet with our host discovery scan.
+The full scanner with IP layer, ICMP layer and IP Adress module.
 '''
 # Import needed packages
 import ipaddress
@@ -12,11 +10,14 @@ import sys
 import threading
 import time
 
-SUBNET = '192.168.10.0/24' # Target subnet here!
-MESSAGE = 'PYTHONRULES!' # Message here!
+SUBNET = '<Target subnet here>'  # Target subnet here!
+MESSAGE = '<Message here>'  # Message here!
 
-# Decode IP layer
+
 class IP:
+    '''
+    IP layer.
+    '''
     def __init__(self, buff=None):
         header = struct.unpack('<BBHHHBBH4s4s', buff)
         self.ver = header[0] >> 4
@@ -32,11 +33,11 @@ class IP:
         self.src = header[8]
         self.dst = header[9]
 
-        # human readable IP addresses
+        # Human readable IP addresses
         self.src_address = ipaddress.ip_address(self.src)
         self.dst_address = ipaddress.ip_address(self.dst)
 
-        # map protocol constants to their names
+        # Map protocol constants to their names
         self.protocol_map = {1: "ICMP", 6: "TCP", 17: "UDP"}
         try:
             self.protocol = self.protocol_map[self.protocol_num]
@@ -44,8 +45,11 @@ class IP:
             print('%s No protocol for %s' % (e, self.protocol_num))
             self.protocol = str(self.protocol_num)
 
-# Decode ICMP layer
+
 class ICMP:
+    '''
+    ICMP layer.
+    '''
     def __init__(self, buff):
         header = struct.unpack('<BBHHH', buff)
         self.type = header[0]
@@ -54,16 +58,22 @@ class ICMP:
         self.id = header[3]
         self.seq = header[4]
 
-# Send message
+
 def udp_sender():
+    '''
+    Send message.
+    '''
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sender:
         for ip in ipaddress.ip_network(SUBNET).hosts():
             time.sleep(1)
             print('+', end='')
             sender.sendto(bytes(MESSAGE, 'utf8'), (str(ip), 65212))
             
-# Scanner
+
 class Scanner:
+    '''
+    Scanner class.
+    '''
     def __init__(self, host):
         self.host = host
         if os.name == 'nt':
@@ -76,6 +86,7 @@ class Scanner:
         print('hitting promiscuous mode...')
         if  os.name == 'nt':
             self.socket.ioctl(socket.SIO_RCVALL, socket.RCVALL_ON)
+
 
     def sniff(self):
         hosts_up = set([f'{str(self.host)} *'])
@@ -94,8 +105,11 @@ class Scanner:
                             if raw_buffer[len(raw_buffer) - len(MESSAGE): ] == bytes(MESSAGE, 'utf8'):
                                 hosts_up.add(str(ip_header.src_address))
                                 print(f'Host Up: {str(ip_header.src_address)}')
-        # handle CTRL-C
+        
         except KeyboardInterrupt:
+            '''
+            Handle CTRL-C (KeyboardInterrupt)
+            '''
             if  os.name == 'nt':
                 self.socket.ioctl(socket.SIO_RCVALL, socket.RCVALL_OFF)
         
@@ -107,12 +121,12 @@ class Scanner:
             print('')
             sys.exit()
 
-# Run program
+
 if __name__ == '__main__':
     if len(sys.argv) == 2:
         host = sys.argv[1]
     else:
-        host = '192.168.10.66' # Host here!
+        host = '127.0.0.1'
     s = Scanner(host)
     time.sleep(10)
     t = threading.Thread(target=udp_sender)
