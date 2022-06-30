@@ -1,7 +1,5 @@
 '''
-A Netcat network tool written in Python. You don't need to change anything to run the program, just read the help message if you don't know how to use it. Use CTRL-D to send the EOF (End of file) marker.
-
-Netcat is the utility knife of networking, so it's no surprise that shrewd systems administrators remove it from their systems. Such a useful tool would be quite an asset if an attacker managed to find a way in. With it, you can read and write data across the network, meaning you can use it to execute remote commands, pass files back and forth, or even open a remote shell.
+A Netcat network tool
 '''
 # Import needed packages
 import argparse
@@ -12,8 +10,11 @@ import sys
 import textwrap
 import threading
 
-# Execute a command
+
 def execute(cmd):
+    '''
+    Execute a command.
+    '''
     cmd = cmd.strip()
     if not cmd:
         return
@@ -21,65 +22,81 @@ def execute(cmd):
                                      stderr=subprocess.STDOUT)
     return output.decode()
 
-# Netcat
+
 class NetCat:
-    # Initialize Netcat
+    '''
+    Main class.
+    '''
     def __init__(self, args, buffer=None):
-        self.args = args # Arguments
+        '''
+        Initialize Netcat.
+        '''
+        self.args = args  # Arguments
         self.buffer = buffer
         # Create a socket object
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
-    # Run the Netcat
+        
+    # Run Netcat
     def run(self):
         if self.args.listen:
             self.listen()
         else:
             self.send()
 
+            
     def send(self):
-        self.socket.connect((self.args.target, self.args.port)) # Connect to the server
+        '''
+        Send data.
+        '''
+        self.socket.connect((self.args.target, self.args.port))  # Connect to the server
         if self.buffer:
             self.socket.send(self.buffer)
 
-        try: # You can close the conection by CTRL-C
+        try:  # You can close the conection by CTRL-C
             while True:
                 recv_len = 1
                 response = ''
-                while recv_len: # Receive data
+                while recv_len:  # Receive data
                     data = self.socket.recv(4096)
                     recv_len = len(data)
                     response += data.decode()
-                    if recv_len < 4096: # If there is no more data, break
+                    if recv_len < 4096:  # If there is no more data, break
                         break
-                if response: # Print the response data and get interactive input
+                if response:  # Print the response data and get interactive input
                     print(response)
                     buffer = input('> ')
                     buffer += '\n'
-                    self.socket.send(buffer.encode()) # Send the input, continue the loop
-        except KeyboardInterrupt: # Use CTRL-C to close the connection
+                    self.socket.send(buffer.encode())  # Send the input, continue the loop
+        except KeyboardInterrupt:  # Use CTRL-C to close the connection
             print('User terminated.')
             self.socket.close()
             sys.exit()
 
-    # The server side
+
     def listen(self):
+        '''
+        Server side to listen for data.
+        '''
         print('Listening')
-        self.socket.bind((self.args.target, self.args.port)) # Bind the IP and port.
+        self.socket.bind((self.args.target, self.args.port))  # Bind the IP and port.
         self.socket.listen(5)
         while True:
             client_socket, _ = self.socket.accept()
             client_thread = threading.Thread(target=self.handle, args=(client_socket,))
             client_thread.start()
 
-    # Performs upload, execute commands, and create interactive shells
+
     def handle(self, client_socket):
-        if self.args.execute: # Execute a file
+        '''
+        Perform tasks.
+        '''
+        if self.args.execute:  # Execute a file
             output = execute(self.args.execute)
             client_socket.send(output.encode())
 
-        elif self.args.upload: # Upload a file
+        elif self.args.upload:  # Upload a file
             file_buffer = b''
             while True:
                 data = client_socket.recv(4096)
@@ -94,7 +111,7 @@ class NetCat:
             message = f'Saved file {self.args.upload}'
             client_socket.send(message.encode())
 
-        elif self.args.command: # Execute a command
+        elif self.args.command:  # Execute a command
             cmd_buffer = b''
             while True:
                 try:
@@ -110,7 +127,7 @@ class NetCat:
                     self.socket.close()
                     sys.exit()
 
-# Run the program
+
 if __name__ == '__main__':
     # Get arguments
     parser = argparse.ArgumentParser(
