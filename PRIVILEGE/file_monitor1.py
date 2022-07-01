@@ -1,11 +1,13 @@
 # Modified example, original given here:
 # http://timgolden.me.uk/python/win32_how_do_i/watch_directory_for_changes.html
-
+'''
+Look for bugs when running a file.
+'''
 import os
-import tempfile
-import threading
+import tempfile  # Create TEMP files
+import threading  # Multithread
 import win32con
-import win32file
+import win32file  # File control on Windows
 
 FILE_CREATED = 1
 FILE_DELETED = 2
@@ -16,7 +18,11 @@ FILE_RENAMED_TO = 5
 FILE_LIST_DIRECTORY = 0x0001
 PATHS = ['c:\\Windows\\Temp', tempfile.gettempdir()]
 
+
 def monitor(path_to_watch):
+    '''
+    Main function
+    '''
     h_directory = win32file.CreateFile(
         path_to_watch,
         FILE_LIST_DIRECTORY,
@@ -44,37 +50,37 @@ def monitor(path_to_watch):
             )
             for action, file_name in results:
                 full_filename = os.path.join(path_to_watch, file_name)
-                if action == FILE_CREATED:
+                if action == FILE_CREATED:  # Created a file
                     print(f'[+] Created {full_filename}')
                    
-                elif action == FILE_DELETED:
+                elif action == FILE_DELETED:  # Deleted a file
                     print(f'[-] Deleted {full_filename}')
                     
-                elif action == FILE_MODIFIED:
+                elif action == FILE_MODIFIED:  # Modified a file
                     print(f'[*] Modified {full_filename}')
                     try:
                         with open(full_filename) as f:
                             contents = f.read()
-                        print('[vvv] Dumping contents ... ') 
+                        print('[vvv] Dumping contents ... ')   # Print the contents of the changed file
                         print(contents)
                         print('[^^^] Dump complete.')
                     except Exception as e:
                         print(f'[!!!] Dump failed. {e}')
                     
-                elif action == FILE_RENAMED_FROM:
+                elif action == FILE_RENAMED_FROM:  # Renamed from another file
                     print(f'[>] Renamed from {full_filename}')
-                elif action == FILE_RENAMED_TO:
+                elif action == FILE_RENAMED_TO:  # Renamed to another file
                     print(f'[<] Renamed to {full_filename}')
                 else:
                     print(f'[?] Unknown action on {full_filename}')
-        except KeyboardInterrupt:
+        except KeyboardInterrupt:  # Stop by CTRL-C
             break
     
-        except Exception:
+        except Exception:  # Bypass errors
             pass
 
 
 if __name__ == '__main__':
     for path in PATHS:
-        monitor_thread = threading.Thread(target=monitor, args=(path,))
-        monitor_thread.start()
+        monitor_thread = threading.Thread(target=monitor, args=(path,))  # Generate thread
+        monitor_thread.start()  # Start thread
