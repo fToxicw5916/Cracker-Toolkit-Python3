@@ -2,13 +2,13 @@
 A Netcat network tool
 '''
 # Import needed packages
-import argparse
-import socket
+import argparse  # Used for getting arguments
+import socket  # Used for TCP connections
 import shlex
 import subprocess
-import sys
+import sys  # System control
 import textwrap
-import threading
+import threading  # Multithread
 
 
 def execute(cmd):
@@ -19,8 +19,8 @@ def execute(cmd):
     if not cmd:
         return
     output = subprocess.check_output(shlex.split(cmd),
-                                     stderr=subprocess.STDOUT)
-    return output.decode()
+                                     stderr=subprocess.STDOUT)  # Run the command
+    return output.decode()  # Return the result
 
 
 class NetCat:
@@ -32,7 +32,7 @@ class NetCat:
         Initialize Netcat.
         '''
         self.args = args  # Arguments
-        self.buffer = buffer
+        self.buffer = buffer  # Current buffer
         # Create a socket object
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -41,9 +41,9 @@ class NetCat:
     # Run Netcat
     def run(self):
         if self.args.listen:
-            self.listen()
+            self.listen()  # As a server
         else:
-            self.send()
+            self.send()  # As a client
 
             
     def send(self):
@@ -52,7 +52,7 @@ class NetCat:
         '''
         self.socket.connect((self.args.target, self.args.port))  # Connect to the server
         if self.buffer:
-            self.socket.send(self.buffer)
+            self.socket.send(self.buffer)  # Send the buffer to the target
 
         try:  # You can close the conection by CTRL-C
             while True:
@@ -72,7 +72,7 @@ class NetCat:
         except KeyboardInterrupt:  # Use CTRL-C to close the connection
             print('User terminated.')
             self.socket.close()
-            sys.exit()
+            sys.exit()  # Exit
 
 
     def listen(self):
@@ -81,11 +81,11 @@ class NetCat:
         '''
         print('Listening')
         self.socket.bind((self.args.target, self.args.port))  # Bind the IP and port.
-        self.socket.listen(5)
+        self.socket.listen(5)  # Listen for connections
         while True:
-            client_socket, _ = self.socket.accept()
-            client_thread = threading.Thread(target=self.handle, args=(client_socket,))
-            client_thread.start()
+            client_socket, _ = self.socket.accept()  # Accept connections
+            client_thread = threading.Thread(target=self.handle, args=(client_socket,))  # Define thread for the connecting client
+            client_thread.start()  # Start a new thread
 
 
     def handle(self, client_socket):
@@ -93,21 +93,21 @@ class NetCat:
         Perform tasks.
         '''
         if self.args.execute:  # Execute a file
-            output = execute(self.args.execute)
-            client_socket.send(output.encode())
+            output = execute(self.args.execute)  # Get output
+            client_socket.send(output.encode())  # Send output
 
         elif self.args.upload:  # Upload a file
             file_buffer = b''
             while True:
-                data = client_socket.recv(4096)
+                data = client_socket.recv(4096)  # Receive data/file
                 if data:
-                    file_buffer += data
-                    print(len(file_buffer))
+                    file_buffer += data  # Receive the file
+                    print(len(file_buffer))  # Output the file
                 else:
                     break
 
             with open(self.args.upload, 'wb') as f:
-                f.write(file_buffer)
+                f.write(file_buffer)  # Save the file
             message = f'Saved file {self.args.upload}'
             client_socket.send(message.encode())
 
@@ -115,7 +115,7 @@ class NetCat:
             cmd_buffer = b''
             while True:
                 try:
-                    client_socket.send(b' #> ')
+                    client_socket.send(b' #> ')  # Send command
                     while '\n' not in cmd_buffer.decode():
                         cmd_buffer += client_socket.recv(64)
                     response = execute(cmd_buffer.decode())
@@ -139,7 +139,7 @@ if __name__ == '__main__':
           netcat.py -t 192.168.1.108 -p 5555 -l -e=\"cat /etc/passwd\" # execute command
           echo 'ABCDEFGHI' | ./netcat.py -t 192.168.1.108 -p 135 # echo local text to server port 135
           netcat.py -t 192.168.1.108 -p 5555 # connect to server
-          '''))
+          '''))  # Help message
     parser.add_argument('-c', '--command', action='store_true', help='initialize command shell')
     parser.add_argument('-e', '--execute', help='execute specified command')
     parser.add_argument('-l', '--listen', action='store_true', help='listen')
