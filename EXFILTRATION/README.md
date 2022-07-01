@@ -1,5 +1,9 @@
 # The Exfiltration module
 ## cryptor.py
+**Install pycryptodome before use!**
+```
+pip install pycryptodome
+```
 Run:
 ```bash
 python cryptor.py
