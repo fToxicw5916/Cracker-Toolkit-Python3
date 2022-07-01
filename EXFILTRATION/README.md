@@ -1,5 +1,4 @@
 # The Exfiltration module
-Gaining access to a target network is only a part of the battle. To make use of your access, you want to be able to exfiltrate documents, spreadsheets, or other bits of data from the target system. In this chapter, we'll create tools that enable you to exfiltrate encryoted data.
 ## cryptor.py
 Run:
 ```bash
@@ -11,23 +10,27 @@ First. Then, delete the '#' sign at the bottom of the file and add it to the 'ge
 plaintext = b'hey there you.'
 print(decrypt(encrypt(plaintext)))
 ```
-Then, run the program again. you should be good to go!
+Then, run the program again.
+
 ## email-exfil.py
-Run after configuration!
+**Run after configuration!**
 ```bash
 python email_exfil.py
 ```
+
 ## transmit-exfil.py
-Run after configuration!
+**Run after configuration!**
 ```bash
 python transmit_exfil.py
 ```
+
 ## paste-exfil.py
-Run after configuration!
+**Run after configuration!**
 You will need a pastebin account and a API key to run.
 ```bash
 python paste_exfil.py
 ```
+
 ## exfil.py
 Run:
 ```bash
