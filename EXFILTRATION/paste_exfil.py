@@ -6,25 +6,26 @@ from win32com import client
 
 import os
 import random
-import requests
+import requests  # Crawler
 import time
 
 # Your pastebin account
-username = 'tim'
-password = 'seKret'
-api_dev_key = 'cd3xxx001xxxx02'
+username = '<Pastebin account here!>'
+password = '<Pastebin password here!>'
+api_dev_key = '<Pastebin API key here!>'
+
 
 def plain_paste(title, contents):
     '''
     Just paste some data.
     '''
-    login_url = 'https://pastebin.com/api/api_login.php'
+    login_url = 'https://pastebin.com/api/api_login.php'  # API login URL
     login_data = {
         'api_dev_key': api_dev_key,
         'api_user_name': username,
         'api_user_password': password,
     }
-    r = requests.post(login_url, data=login_data)
+    r = requests.post(login_url, data=login_data)  # Request to login
     api_user_key = r.text
 
     paste_url = 'https://pastebin.com/api/api_post.php'
@@ -36,9 +37,10 @@ def plain_paste(title, contents):
         'api_option': 'paste',
         'api_paste_private': 0,
         }
-    r = requests.post(paste_url, data=paste_data)
-    print(r.status_code)
-    print(r.text)
+    r = requests.post(paste_url, data=paste_data)  # Request to paste data
+    print(r.status_code)  # Accept or not
+    print(r.text)  # Response content
+
 
 def wait_for_browser(browser):
     '''
@@ -47,11 +49,13 @@ def wait_for_browser(browser):
     while browser.ReadyState != 4 and browser.ReadyState != 'complete':
         time.sleep(0.1)
 
+
 def random_sleep():
     '''
     Random sleep for a while so that the website don't ban you.
     '''
-    time.sleep(random.randint(5,10))
+    time.sleep(random.randint(5,10))  # Randomly waits
+
 
 def login(ie):
     '''
@@ -68,6 +72,7 @@ def login(ie):
     if ie.Document.forms[0].id == 'w0':
         ie.document.forms[0].submit()
     wait_for_browser(ie)
+
 
 def submit(ie, title, contents):
     '''
@@ -86,6 +91,7 @@ def submit(ie, title, contents):
     random_sleep()
     wait_for_browser(ie)
 
+
 def ie_paste(title, contents):
     ie = client.Dispatch('InternetExplorer.Application')
     ie.Visible = 1
@@ -102,4 +108,4 @@ def ie_paste(title, contents):
 
 # Execute
 if __name__ == '__main__':
-    ie_paste('title', 'contents')
+    ie_paste('<Paste title here!>', 'Paste content here!')
