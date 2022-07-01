@@ -15,13 +15,13 @@ def main():
     Main function.
     '''
     # Create a socket object and bind the IP and port
-    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server.bind((IP, PORT))
-    server.listen(5)
+    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # Create object
+    server.bind((IP, PORT))  # Bind to host and port
+    server.listen(5)  # Listen for connections
     print(f'[*] Listening on {IP}:{PORT}')
 
     while True:
-        client, address = server.accept()  # Accept connectiona
+        client, address = server.accept()  # Accept connections
         print(f'[*] Accepted connection from {address[0]}:{address[1]}')
         client_handler = threading.Thread(target=handle_client, args=(client,))  # Define a thread
         client_handler.start()  # Start the thread
