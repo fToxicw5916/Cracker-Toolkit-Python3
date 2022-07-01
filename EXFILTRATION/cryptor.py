@@ -3,11 +3,11 @@ A script that encrypt and decrypt data.
 '''
 # Import needed packages
 from Cryptodome.Cipher import AES, PKCS1_OAEP
-from Cryptodome.PublicKey import RSA
+from Cryptodome.PublicKey import RSA  # RSA key for SSH
 from Cryptodome.Random import get_random_bytes
 from io import BytesIO
 
-import base64
+import base64  # Base64 encoding and decoding
 import zlib
 
 
@@ -73,8 +73,8 @@ def decrypt(encrypted):
     plaintext = zlib.decompress(decrypted)
     return plaintext
 
-# Execute
+
 if __name__ == '__main__':
     generate()
-    # plaintext = b'hey there you.'  # Data to be encrypted or decrypted
+    # plaintext = b'<Data to be encyrpted or decrypted here!>'  # Data to be encrypted or decrypted
     # print(decrypt(encrypt(plaintext)))
