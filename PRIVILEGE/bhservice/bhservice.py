@@ -1,5 +1,5 @@
 '''
-A script that inplements the service into your computer so that you can run other scripts.
+A script that inplements the service into your computer so that you can run other scripts in this module.
 '''
 import os
 import servicemanager
@@ -11,14 +11,19 @@ import win32event
 import win32service
 import win32serviceutil
 
-SRCDIR = ''  # Source code directory
-TGTDIR = ''  # Target directory
+SRCDIR = '<Source code directory here!>'  # Source code directory
+TGTDIR = '<Target directory here!>'  # Target directory
+
 
 class BHServerSvc(win32serviceutil.ServiceFramework):
-    _svc_name_ = "BlackHatService"
-    _svc_display_name_ = "Black Hat Service"
+    '''
+    Vulnerable BlackHat service.
+    '''
+    _svc_name_ = "BlackHatService"  # Service name
+    _svc_display_name_ = "Black Hat Service"  # Service display name
     _svc_description_ = ("Executes VBScripts at regular intervals." +
-                        " What could possibly go wrong?")
+                        " What could possibly go wrong?")  # Service discription
+
 
     def __init__(self, args):
         self.vbs = os.path.join(TGTDIR, 'bhservice_task.vbs')
@@ -27,15 +32,27 @@ class BHServerSvc(win32serviceutil.ServiceFramework):
         win32serviceutil.ServiceFramework.__init__(self, args)
         self.hWaitStop = win32event.CreateEvent(None, 0, 0, None)
 
+
     def SvcStop(self):
+        '''
+        Stop service
+        '''
         self.ReportServiceStatus(win32service.SERVICE_STOP_PENDING)
         win32event.SetEvent(self.hWaitStop)
 
+
     def SvcDoRun(self):
+        ''''
+        Start service
+        '''
         self.ReportServiceStatus(win32service.SERVICE_RUNNING)
-        self.main()
+        self.main()  # Run the main function
+
 
     def main(self):
+        '''
+        Main function
+        '''
         while True:
             ret_code = win32event.WaitForSingleObject(self.hWaitStop, self.timeout)
             if ret_code == win32event.WAIT_OBJECT_0:
@@ -46,6 +63,7 @@ class BHServerSvc(win32serviceutil.ServiceFramework):
             shutil.copy(src, self.vbs)
             subprocess.call("cscript.exe %s" % self.vbs, shell=False)
             os.unlink(self.vbs)
+
 
 if __name__ == '__main__':
     if len(sys.argv) == 1:
