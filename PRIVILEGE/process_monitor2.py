@@ -4,13 +4,17 @@ A script that monitor's your process and try's to get the tokens for them.
 import os
 import sys
 
-import win32api
+import win32api  # Windows API
 import win32con
-import win32security
+import win32security  # Windows security
 
-import wmi
+import wmi  # Process monitor
+
 
 def get_process_privileges(pid):
+    '''
+    Get the privileges of a running process, which can be very useful
+    '''
     try:
         hproc = win32api.OpenProcess(win32con.PROCESS_QUERY_INFORMATION, False, pid)
         htok = win32security.OpenProcessToken(hproc, win32con.TOKEN_QUERY)
@@ -24,13 +28,21 @@ def get_process_privileges(pid):
 
     return privileges
 
+
 def log_to_file(message):
+    '''
+    Write log to a file
+    '''
     with open('process_monitor_log.csv', 'a') as fd:
         fd.write(f'{message}\r\n')
 
+
 def monitor():
+    '''
+    Main function
+    '''
     log_to_file('CommandLine, Time, Executable, Parent PID, PID, User, Privileges')
-    c = wmi.WMI()
+    c = wmi.WMI()  # Create monitor object
     process_watcher = c.Win32_Process.watch_for('creation')
     while True:
         try:
@@ -52,6 +64,7 @@ def monitor():
             log_to_file(process_log_message)
         except Exception:
             pass
+
 
 if __name__ == '__main__':
     monitor()
