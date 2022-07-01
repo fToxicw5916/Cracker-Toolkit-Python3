@@ -6,11 +6,12 @@ import smtplib  # Used for emails
 import time
 import win32com.client  # Used for Windows Outlook
 
-smtp_server = 'smtp.example.com'  # The SMTP server
-smtp_port = 587  # SMTP server port
-smtp_acct = 'tim@example.com'  # Account name
-smtp_password = 'seKret'  # Account password
-tgt_accts = ['tim@elsewhere.com']  # List of accounts you are going to send to
+smtp_server = '<SMTP server address here!>'  # The SMTP server
+smtp_port = <SMTP server port here!>  # SMTP server port
+smtp_acct = '<Email account here!>'  # Account name
+smtp_password = '<Email password here!>'  # Account password
+tgt_accts = ['<List of accounts you are going to send to here!>']  # List of accounts you are going to send to
+
 
 def plain_email(subject, contents):
     '''
@@ -27,11 +28,12 @@ def plain_email(subject, contents):
     time.sleep(1)
     server.quit()
 
+
 def outlook(subject, contents):
     '''
     Specially designed for the Outlook application on Windows
     '''
-    outlook = win32com.client.Dispatch("Outlook.Application")
+    outlook = win32com.client.Dispatch("Outlook.Application")  # Open Outlook application
     message = outlook.CreateItem(0)
     message.DeleteAfterSubmit = True
     message.Subject = subject
@@ -39,6 +41,6 @@ def outlook(subject, contents):
     message.To = 'boodelyboo@boodelyboo.com'
     message.Send()
 
-# Execute
+
 if __name__ == '__main__':
-    plain_email('test2 message', 'attack at dawn.')
+    plain_email('<Subject here!>', '<Content here!>')
